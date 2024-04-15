@@ -43,4 +43,14 @@ function refresh_url(int $second=2, string $url){
 header("Refresh:{$second},url={$url}");
 
 }
+
+
+function redirect_url(string $url){
+  header("Location:{$url}");
+}
+function pre(array $a){
+echo "<pre>";
+print_r($a);
+echo "</pre>";
+}
 ?>
