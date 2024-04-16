@@ -110,9 +110,9 @@ if (isset($_POST["update"]) && !empty($_POST["update"])) {
  require_once "./error/home.php";
 
  // =-=====================check email if already exist or not ===================
- $check_email="SELECT * FROM `users` WHERE `email`= '{$email}' AND `user_id` != '{$user_id}'";
+ $check_email = "SELECT * FROM `users` WHERE `email`= '{$email}' AND `user_id` != '{$user_id}'";
 
- $exe_email= $conn->query($check_email);
+ $exe_email = $conn->query($check_email);
 
 
  if ($exe_email->num_rows > 0) {
@@ -122,7 +122,7 @@ if (isset($_POST["update"]) && !empty($_POST["update"])) {
 
 
  }
-// ====================================================
+ // ====================================================
 
 
  if ($status["error"] > 0) {
@@ -144,24 +144,166 @@ if (isset($_POST["update"]) && !empty($_POST["update"])) {
 
   $encrypt = base64_encode($password);
 
+  $fileUpload = $_FILES["profile"]["name"];
+  // =====================================================
+
+  $check_address = "SELECT * FROM  `user_address` WHERE `user_id` = '{$user_id}' ";
+
+  $checkExe = $conn->query($check_address);
 
 
-  $update = "UPDATE `users` SET `email`='{$email}' ,`password`='{$hash}'
-  ,`ptoken`='{$encrypt}' , `user_name`='{$user_name}' WHERE `user_id` = '{$user_id}' ";
 
-  $exe = $conn->query($update);
+  // case 1 
+
+  /*
+  if user only updated picture while data remain same 
+
+  */
 
 
-  if ($exe) {
-   if ($conn->affected_rows > 0) {
-    Success_MSG("DATA HAS BEEN UPDATED");
+
+  if (isset($fileUpload) && !empty($fileUpload)) {
+
+
+   $ext = ["jpg", "jpeg", "png"];
+
+   $destination = "/asset/upload/";
+
+   $file = FileUPload("profile", $ext, $destination);
+
+   $RelativeUrl = $file[0];
+
+   $absoluteUrl = $file[1];
+
+
+
+
+
+
+   $update = "UPDATE `users` SET `email`='{$email}' ,`password`='{$hash}'
+ ,`ptoken`='{$encrypt}' , `user_name`='{$user_name}' WHERE `user_id` = '{$user_id}' ";
+
+
+   if ($checkExe->num_rows > 0) {
+
+    $oldFile = $checkExe->fetch_assoc();
+
+    // echo $oldFile["relativeUrl"];
+
+    if (file_exists($oldFile["relativeUrl"])) {
+     unlink($oldFile["relativeUrl"]);
+
+     echo "ok";
+    }
+
+    // if (file_exists($oldFile["image"])) {
+    //  unlink($oldFile["image"]);
+    // }
+
+    $sql_address1 = "UPDATE `user_address` SET `relativeUrl`='{$RelativeUrl}', `image`='{$file[1]}' WHERE `user_id`='{$user_id}'";
+
+    $exe2 = $conn->query($sql_address1);
+
+
+
    } else {
-    ERROR_MSG("DATA HAS NOT BEEN UPDATED" . $update);
+    $sql_address2 = "INSERT INTO  `user_address` (`relativeUrl`,`image`,`user_id`) VALUES ('{$RelativeUrl}','{$absoluteUrl}','{$user_id}')";
+
+    $exe2 = $conn->query($sql_address2);
+
+    $lastInsertId = $conn->insert_id;
+
+
+    $update = "UPDATE `users` SET `email`='{$email}' ,`password`='{$hash}'
+    ,`ptoken`='{$encrypt}' , `user_name`='{$user_name}' , `address_id`='{$lastInsertId}' WHERE `user_id` = '{$user_id}' ";
+
+
    }
+
+
+
+
+
+
+  }
+  // ===================================================
+  // case 2  
+
+  /*
+  if user only updated data while picture remain same 
+
+  */ else {
+
+   $file = true;
+
+
+
+   $update = "UPDATE `users` SET `email`='{$email}' ,`password`='{$hash}'
+ ,`ptoken`='{$encrypt}' , `user_name`='{$user_name}' WHERE `user_id` = '{$user_id}' ";
+
+
+   if ($checkExe->num_rows > 0) {
+
+    $sql_address1 = "UPDATE `user_address` SET `address`='none' WHERE `user_id`='{$user_id}'";
+    $exe2 = $conn->query($sql_address1);
+
+   } else {
+    $sql_address2 = "INSERT INTO  `user_address`  (`address`,`user_id`) VALUES ('none','{$user_id}')";
+
+    $exe2 = $conn->query($sql_address2);
+
+    $lastInsertId = $conn->insert_id;
+
+
+    $update = "UPDATE `users` SET `email`='{$email}' ,`password`='{$hash}'
+    ,`ptoken`='{$encrypt}' , `user_name`='{$user_name}' , `address_id`='{$lastInsertId}' WHERE `user_id` = '{$user_id}' ";
+
+
+   }
+
+
+
   }
 
 
-  refresh_url(3, HOME);
+
+
+
+
+  // case 3 
+
+  /*
+  if user updated picture and data also 
+
+  */
+
+
+
+
+
+  if ($file == false) {
+   refresh_url(2, HOME);
+  } else {
+
+   $exe = $conn->query($update);
+
+
+
+   if ($exe) {
+    if ($conn->affected_rows > 0) {
+     Success_MSG("DATA HAS BEEN UPDATED");
+    } else {
+     ERROR_MSG("DATA HAS NOT BEEN UPDATED" . $update);
+    }
+   }
+
+
+   refresh_url(3, HOME);
+
+
+  }
+
+
 
 
 
@@ -171,6 +313,28 @@ if (isset($_POST["update"]) && !empty($_POST["update"])) {
 }
 
 
+if (isset($_POST["file_upload"]) && !empty($_POST["file_upload"])) {
+
+ // $file= $_FILES["profile"];
+
+
+ // $file_name=$file["name"];
+
+ // $tmpName=$file["tmp_name"];
+ $ext = ["jpg", "jpeg", "png"];
+
+ $destination = "/asset/upload/";
+
+ $file = FileUPload("profile", $ext, $destination);
+
+ if ($file == false) {
+  refresh_url(2, HOME);
+ }
+
+
+ // move_uploaded_file($tmpName,$destination);
+
+}
 
 
 

@@ -2,9 +2,23 @@
 
 require_once dirname(__FILE__) . "/layout/user/header.php";
 
+// echo domain2."<br>";
 
+// echo domain;
 ?>
 <h1>HOME</h1>
+
+<form enctype="multipart/form-data" class="text-bg-dark m-5 p-5" action="<?php echo insert_form; ?>" method="POST">
+
+  <div class="mb-3">
+    <input type="file" name="profile" class="form-control" aria-label="file example" required>
+    <!-- <div class="invalid-feedback">Example invalid form file feedback</div> -->
+  </div>
+
+  <div class="mb-3">
+    <input class="btn btn-primary" type="submit" name="file_upload">
+  </div>
+</form>
 
 <form action="<?php echo insert_form ?>" class="text-bg-dark p-5 m-5" method="POST">
 
@@ -68,20 +82,16 @@ if ($qwer->num_rows > 0) {
             <td>
               <div class="card text-bg-dark">
                 <div class="card-body d-flex flex-wrap justify-content-center">
-                  
-              
 
-                <a href="<?php echo update ?>?q=<?php echo $row["user_id"]  ?>"
-                  
-                  style="font-weight: bolder;"
+
+
+                  <a href="<?php echo update ?>?q=<?php echo $row["user_id"] ?>" style="font-weight: bolder;"
                     class=" link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
                     UPDATE</a>
 
 
                   <span> &ensp;&ensp;&ensp;|&ensp;&ensp;&ensp;</span>
-                  <a href="#"
-                  
-                  style="font-weight: bolder;"
+                  <a href="#" style="font-weight: bolder;"
                     class=" link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
                     DELETE</a>
                 </div>
