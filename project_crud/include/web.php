@@ -15,8 +15,16 @@ define("upload","/asset/upload/");
 
 define("insert_form",domain."/action/user/form_action.php");
 define("update_form",domain."/action/user/form_action.php");
+define("delete_form",domain."/action/user/form_action.php");
 
-define("HOME",domain."/home.php");
+
+define("login_form",domain."/action/auth/form_action.php");
+
+define("HOME",domain."/login.php");
+define("SIGNUP",domain."/signup.php");
+define("LOGOUT",domain."/logout.php");
+
+define("DASHBOARD",domain."/dashboard.php");
 define("update",domain."/update.php");
 
 ?>
