@@ -8,6 +8,13 @@ $helper= new help;
 
 $db= new DB;
 
+
+
+
+// $row[2]["username"];
+
+$helper->pre($row);
+
 if (isset($_POST["insert"]) && !empty($_POST["insert"])) {
   
  $email =$helper->filter_data($_POST["email"]);

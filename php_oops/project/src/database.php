@@ -38,8 +38,49 @@ class database
     }
 
 
+    public function mySelect($table, $col = null , $where = null)
+    {
 
-    public function checkEmail(string $email,string $table)
+        if ($this->CheckTable($table)) {
+
+            if ($col == null ) {
+                $col= "*";
+            }
+
+            $this->query = "SELECT {$col} FROM `{$table}` LIMIT 4 OFFSET  4";
+
+
+            if ($where != null) {
+                $this->query .= " WHERE '{$where} '";
+            }
+
+
+            $this->exe = $this->conn->query($this->query);
+
+
+            if ($this->exe && $this->exe->num_rows > 0) {
+
+                while ($row = $this->exe->fetch_assoc()) {
+
+                    array_push($this->result, $row);
+                }
+
+
+            }
+
+        }
+
+
+    }
+
+
+    public function getResult()
+    {
+        return $this->result;
+    }
+
+    // check mail if exist or not in specific table
+    public function checkEmail(string $email, string $table)
     {
         $check_email = "SELECT * FROM `{$table}` WHERE `email`= '{$email}'";
 
@@ -60,7 +101,7 @@ class database
         }
     }
 
-
+    //  insert data in specific table
     public function insert_table(string $table, array $data)
     {
         /**
@@ -151,6 +192,13 @@ class helper extends database
         $data = stripcslashes($data);
 
         return $data;
+    }
+
+    public function pre(array $a)
+    {
+        echo "<pre>";
+        print_r($a);
+        echo "</pre>";
     }
 
 }

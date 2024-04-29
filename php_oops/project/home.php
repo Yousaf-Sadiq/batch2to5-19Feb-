@@ -27,12 +27,64 @@ require_once dirname(__FILE__) . "/layout/header.php";
  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
+
+<div class="table-responsive">
+
+<table id="myTable" class="table table-dark table-hover">
+<!-- <table id="myTable"> -->
+   <thead>
+   
+   <tr>
+      <th>id</th>
+      <th>USerName</th>
+      <th>Email</th>
+   </tr>
+
+   </thead>
+
+   <tbody></tbody>
+ 
+</table>
+
+</div>
+
 <?php
 
 require_once dirname(__FILE__) . "/layout/footer.php";
 ?>
 
 <script>
+
+$(document).ready(function(){
+
+let table =document.querySelector("#myTable");
+
+
+$(table).DataTable({
+   processing: true,
+   serverSide: true,
+
+   "ajax":"<?php echo GetUSer ?>",
+
+   "datasrc":""
+   
+   ,"columns": [
+         {"data": "id"},
+         {"data": "user_name"},
+         {"data": "email"},
+   ]
+   });
+
+
+})
+
+
+
+
+
+
+
+
 
  let myform = document.querySelector("#myform");
 

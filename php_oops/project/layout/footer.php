@@ -11,6 +11,11 @@
    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
    crossorigin="anonymous"
   ></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script> 
+
+  <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
+
+
 <script>
   
  function Error_msg(msg, id) {
