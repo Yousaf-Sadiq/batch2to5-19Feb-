@@ -20,6 +20,7 @@ class database
 
     private $exe;
     private $result = [];
+    private $count = [];
 
     private $status = [
         "error" => 0,
@@ -38,28 +39,46 @@ class database
     }
 
 
-    public function mySelect($table, $col = null , $where = null)
+    public function Mysql($query, $count = false)
+    {
+
+        $this->query = $query;
+        $this->exe = $this->conn->query($this->query);
+
+        if ($this->exe) {
+            if ($count) {
+
+                $counts = $this->exe->fetch_assoc();
+                $this->count= [];
+                $this->count[] = $counts;
+            }
+        }
+    }
+    public function mySelect($table, $col = null, $where = null, $limit = null)
     {
 
         if ($this->CheckTable($table)) {
 
-            if ($col == null ) {
-                $col= "*";
+            if ($col == null) {
+                $col = "*";
             }
 
-            $this->query = "SELECT {$col} FROM `{$table}` LIMIT 4 OFFSET  4";
+            $this->query = "SELECT {$col} FROM `{$table}` ";
 
-
+            
             if ($where != null) {
                 $this->query .= " WHERE '{$where} '";
             }
 
+            if ($limit != null) {
+               $this->query .= "  {$limit}";
+            }
 
             $this->exe = $this->conn->query($this->query);
 
 
             if ($this->exe && $this->exe->num_rows > 0) {
-
+                $this->result= [];
                 while ($row = $this->exe->fetch_assoc()) {
 
                     array_push($this->result, $row);
@@ -76,7 +95,15 @@ class database
 
     public function getResult()
     {
+
         return $this->result;
+
+    }
+     public function getCount()
+    {
+
+        return $this->count;
+
     }
 
     // check mail if exist or not in specific table

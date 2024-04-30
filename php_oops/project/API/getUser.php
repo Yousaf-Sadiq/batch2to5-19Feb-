@@ -9,12 +9,35 @@ use src\database\helper as help;
 $helper= new help;
 
 $db= new DB;
+// ternary operator  condition ? true : false 
+
+$limit = isset($_POST['length']) ? intval($_POST['length']) : 10; // Number of records per page
+
+$offset = isset($_POST['start']) ? intval($_POST['start']) : 0;
 
 
-$db->mySelect("users");
+$sql_total = "SELECT count(*) as total FROM `users`";
 
-$row = ["data"=>$db->getResult()];
+$db->Mysql($sql_total,true);
 
-echo json_encode($row);
+$totalRecords = $db->getCount();
+
+// total = 16 
+
+
+
+
+$db->mySelect("users",null,null," LIMIT {$limit} OFFSET {$offset}");
+
+// $row = ["data"=>$db->getResult()];
+
+$output = array(
+ "draw" => isset($_POST['draw']) ? intval($_POST['draw']) : 1, // current page 
+ "recordsTotal" => $totalRecords[0]["total"], // Total number of records
+ "recordsFiltered" => $totalRecords[0]["total"], // Total number of records after filtering (if applied)
+ "data" => $db->getResult() // Array of records
+);
+
+echo json_encode($output);
 
 ?>
