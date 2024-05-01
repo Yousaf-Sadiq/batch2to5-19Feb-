@@ -49,7 +49,7 @@ class database
             if ($count) {
 
                 $counts = $this->exe->fetch_assoc();
-                $this->count= [];
+                $this->count = [];
                 $this->count[] = $counts;
             }
         }
@@ -65,20 +65,20 @@ class database
 
             $this->query = "SELECT {$col} FROM `{$table}` ";
 
-            
+
             if ($where != null) {
                 $this->query .= " WHERE '{$where} '";
             }
 
             if ($limit != null) {
-               $this->query .= "  {$limit}";
+                $this->query .= "  {$limit}";
             }
 
             $this->exe = $this->conn->query($this->query);
 
 
             if ($this->exe && $this->exe->num_rows > 0) {
-                $this->result= [];
+                $this->result = [];
                 while ($row = $this->exe->fetch_assoc()) {
 
                     array_push($this->result, $row);
@@ -99,7 +99,7 @@ class database
         return $this->result;
 
     }
-     public function getCount()
+    public function getCount()
     {
 
         return $this->count;
@@ -128,6 +128,45 @@ class database
         }
     }
 
+
+    // update funtion globaly 
+
+    public function update(string $table, array $data, string $where)
+    {
+
+        $this->query = "UPDATE `{$table}` SET ";
+
+        $allValue = "";
+        foreach ($data as $key => $value) {
+            $allValue .= "`{$key}`='{$value}' ,";
+        }
+
+        $this->query .= rtrim($allValue, ",") . "WHERE $where";
+
+        $this->exe = $this->conn->query($this->query);
+
+
+        if ($this->exe) {
+            if ($this->conn->affected_rows > 0) {
+
+                $this->status["msg"] = "Data has been UPDATED";
+                // return true;
+            } else {
+                $this->status["error"]++;
+                $this->status["msg"] = "DATA REMAIN SAME";
+            }
+
+            return json_encode($this->status);
+
+        } else {
+            $this->status["error"]++;
+            $this->status["msg"] = "ERROR in Query " . $this->query;
+            return json_encode($this->status);
+        }
+
+
+
+    }
     //  insert data in specific table
     public function insert_table(string $table, array $data)
     {

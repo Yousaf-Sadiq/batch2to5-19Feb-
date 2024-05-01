@@ -10,6 +10,55 @@ $db= new DB;
 
 
 
+if (isset($_POST["update"]) && !empty($_POST["update"])) {
+  
+  $email =$helper->filter_data($_POST["email"]);
+  $user_id=$helper->filter_data($_POST["user_id"]);
+  $user_name =$helper->filter_data($_POST["user_name"]);
+
+  $data= [
+    "email"=>$email,
+    "user_name"=>$user_name,
+   ];
+
+  $status = [
+    "error" => 0,
+    "msg" => []
+  ];
+  
+  
+  
+  if (!isset($email) || empty($email)) {
+   $status["error"]++;
+  
+   array_push($status["msg"], "EMAIL FIELD IS REQUIRED");
+  }
+  
+  
+  
+  if (!isset($user_name) || empty($user_name)) {
+   $status["error"]++;
+  
+   array_push($status["msg"], "USERNAME FIELD IS REQUIRED");
+  }
+  
+  
+  if ($status["error"] > 0) {
+   
+   echo json_encode($status);
+  }
+  else{
+
+
+   echo $db->update("users",$data, " `id` = '{$user_id}'");
+
+  }
+  
+
+
+
+}
+
 
 // $row[2]["username"];
 
@@ -52,6 +101,8 @@ else{
  $hash= password_hash($pswd,PASSWORD_BCRYPT);
 
  $encrypt = base64_encode($pswd);
+ 
+ 
  $data= [
   "email"=>$email,
   "password"=>$hash,

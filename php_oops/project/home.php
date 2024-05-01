@@ -63,9 +63,13 @@ require_once dirname(__FILE__) . "/layout/header.php";
                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-bg-dark">
-               <form action="" method="post">
+               <div id="update_error"></div>
+               <form action="#" method="post" id="update_form">
+
                   <input type="hidden" id="user_id" name="user_id">
+
                   <input type="hidden" id="update" name="update" value="update">
+
                   <div class="mb-3">
                      <label for="exampleInputEmail1" class="form-label">Email address</label>
                      <input type="email" name="email" class="form-control" id="emails" aria-describedby="emailHelp">
@@ -134,28 +138,29 @@ require_once dirname(__FILE__) . "/layout/footer.php";
    })
 
    function Ondelete(id) {
-      console.log("delete"+ id)
+      console.log("delete" + id)
    }
 
    function OnEdit(id, email, user_name) {
 
+      // object modal 
       const myModal = new bootstrap.Modal('#staticBackdrop', {
          keyboard: false
       })
-
-      const mine = document.getElementById('staticBackdrop'); 
-      
+      //  modal id 
+      const mine = document.getElementById('staticBackdrop');
+      // bootstrab modal to activate this modal 
       myModal.show(mine)
-   
-      let userid=document.querySelector("#user_id");
-      let Email=document.querySelector("#emails");
-      let User_name=document.querySelector("#us_name");
+
+      let userid = document.querySelector("#user_id");
+      let Email = document.querySelector("#emails");
+      let User_name = document.querySelector("#us_name");
 
 
-      userid.value= id
-      Email.value= email
-      User_name.value= user_name
-   
+      userid.value = id
+      Email.value = email
+      User_name.value = user_name
+
    }
 
 
@@ -164,7 +169,89 @@ require_once dirname(__FILE__) . "/layout/footer.php";
 
 
 
+
+
+   let update_form = document.querySelector("#update_form");
+
+
+   update_form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      var updateForm = document.querySelector("#update_form");
+
+      let ALLFormData = new FormData(updateForm);
+
+      var option_update = {
+         method: 'POST',
+         // headers: {
+         //  'Content-Type': 'application/json'
+         // },
+         body: ALLFormData
+      };
+
+
+      const response = await fetch("<?php echo update_form ?>", option_update);
+
+      var getResponse = await response.json();
+
+      if (getResponse.error > 0) {
+
+         if (getResponse.error == 1) {
+            Error_msg(getResponse.msg, "update_error")
+         }
+         else {
+            for (const msg of getResponse.msg) {
+               Error_msg(msg, "update_error")
+            }
+         }
+
+
+
+
+
+
+
+      }
+      else {
+
+         console.log(getResponse.msg)
+         success_msg(getResponse.msg, "update_error")
+
+
+      }
+
+
+
+
+
+      setTimeout(function () {
+
+         let error = document.querySelectorAll(".myclose")
+
+         // console.log(error)
+         // ===================================================
+         error.forEach(e => {
+
+            console.log(e)
+
+            e.style.transition = "all 0.75s ease-in-out"
+            e.style.opacity = "0"
+
+            setTimeout(function () {
+               e.remove()
+            }, 1000)
+
+
+         });
+         // ============================
+
+      }, 1000)
+   })
+
+
+
    let myform = document.querySelector("#myform");
+
 
    myform.addEventListener("submit", async function (e) {
 
