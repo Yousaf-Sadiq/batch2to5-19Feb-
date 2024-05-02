@@ -129,6 +129,33 @@ class database
     }
 
 
+    public function delete(string $table, string $where)
+    {
+
+        $this->query = "DELETE FROM `{$table}` WHERE {$where}";
+        $this->exe = $this->conn->query($this->query);
+
+
+        if ($this->exe) {
+            if ($this->conn->affected_rows > 0) {
+
+                $this->status["msg"] = "Data has been DELETED";
+                // return true;
+            } else {
+                $this->status["error"]++;
+                $this->status["msg"] = "ERROR IN QUERY {$this->query}";
+            }
+
+            return json_encode($this->status);
+
+        } else {
+            $this->status["error"]++;
+            $this->status["msg"] = "ERROR in Query " . $this->query;
+            return json_encode($this->status);
+        }
+
+    }
+
     // update funtion globaly 
 
     public function update(string $table, array $data, string $where)

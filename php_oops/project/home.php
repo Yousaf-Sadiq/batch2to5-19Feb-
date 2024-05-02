@@ -93,6 +93,42 @@ require_once dirname(__FILE__) . "/layout/header.php";
    </div>
 
 </div>
+<div class="modal fade" id="delete_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+   aria-labelledby="delete_modals" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h1 class="modal-title fs-5" id="delete_modals">
+               DELETE <span style="color:red">!</span>
+            </h1>
+
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+         <div id="delete_error"></div>  
+
+         <h1 class="modal-title " id="delete_modals">
+               ARE YOU SURE <span style="color:red">!</span>
+            </h1>
+            <form action="#" method="post" id="delete_form">
+
+               <input type="hidden" readonly id="user_ids" name="user_id">
+
+               <input type="hidden" id="update" name="delete" value="delete">
+
+
+
+               <button type="submit" class="btn btn-primary">DELETE</button>
+            </form>
+         </div>
+         <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+            <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+         </div>
+      </div>
+   </div>
+</div>
+
 
 <?php
 
@@ -139,6 +175,17 @@ require_once dirname(__FILE__) . "/layout/footer.php";
 
    function Ondelete(id) {
       console.log("delete" + id)
+
+      const myModal = new bootstrap.Modal('#delete_modal', {
+         keyboard: false
+      })
+      //  modal id 
+      const mine = document.getElementById('delete_modal');
+      // bootstrab modal to activate this modal 
+      myModal.show(mine)
+      let userid = document.querySelector("#user_ids");
+      userid.value = id
+
    }
 
    function OnEdit(id, email, user_name) {
@@ -169,6 +216,39 @@ require_once dirname(__FILE__) . "/layout/footer.php";
 
 
 
+
+
+   let delete_form = document.querySelector("#delete_form");
+
+   delete_form.addEventListener("submit",async function (event) {
+      event.preventDefault();
+      var delete_form = document.querySelector("#delete_form");
+
+      let DeleteData = new FormData(delete_form);
+      var option_delete = {
+         method: 'POST',
+         // headers: {
+         //  'Content-Type': 'application/json'
+         // },
+         body: DeleteData
+      };
+
+      const responses = await fetch("<?php echo delete_form ?>", option_delete);
+
+      
+      var getResponse = await responses.json();
+
+      console.log(getResponse)
+      if (getResponse.error == 0) {
+         success_msg(getResponse.msg,"delete_error")
+
+         // location.reload
+         setTimeout(function(){
+            location.reload()
+         },2000)
+      }
+
+   })
 
 
    let update_form = document.querySelector("#update_form");
